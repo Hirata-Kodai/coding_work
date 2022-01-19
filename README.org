@@ -1,0 +1,2 @@
+#+OPTIONS: toc:nil, ^:nil
+** 雑なコーディング履歴
