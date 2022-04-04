@@ -1,0 +1,34 @@
+* add_axesメソッドを使う
+#+begin_src python
+	import matplotlib.pyplot as plt
+	fig = plt.figure()              # figureオブジェクトを作成
+	ax  = fig.add_axes((0,0,1,1))   # axesオブジェクトを作成[左端, 下端, 幅, 高さ]
+	ax.plot([1,2], [3,4])           # plotメソッドでデータをプロット
+	plt.show()                      # グラフを表示
+#+end_src
+
+#+RESULTS:
+: None
+* add_subplotメソッドを使う
+#+begin_src python
+  import matplotlib.pyplot as plt
+  fig = plt.figure()              # figureオブジェクトを作成
+  ax  = fig.add_subplot(111)   # axesオブジェクトを作成 タプルの値を(I, J, K)とすると，I行J列の格子のK番目
+  ax.plot([1,2], [3,4])  # plotメソッドでデータをプロット
+  plt.show()  # グラフを表示
+#+end_src
+
+#+RESULTS:
+: None
+
+* subplotsメソッドを使う
+#+begin_src python
+  import matplotlib.pyplot as plt
+  fig, ax = plt.subplots(nrows=1, ncols=1) # figure, axesオブジェクトを作成（axes が複数の場合はリストが返る）
+  ax.plot([1,2], [3,4])
+  plt.show()
+#+end_src
+
+#+RESULTS:
+: None
+
