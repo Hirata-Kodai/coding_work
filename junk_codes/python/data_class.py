@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class MyDataClass:
     id: int
@@ -22,7 +23,7 @@ class MyClass:
 
 
 def main():
-    me = MyClass('平田', '航大')
+    me = MyClass('航大', '平田')
     me.greeting()
     me.declare_fullname()
     data = MyDataClass(1, 'Hirata Kodai', 'Male')
