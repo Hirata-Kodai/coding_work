@@ -1,6 +1,6 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-PyMySQL
+PyMySQL[rsa]
 python-dotenv
 isort

@@ -19,7 +19,7 @@ python:
 	docker compose exec python /bin/bash
 
 mysql:
-	docker compose exec mysql mysql -u root -p
+	docker compose exec mysql mysql -u root -p -D anime_review_app_db
 
 logs:
 	docker compose logs -f

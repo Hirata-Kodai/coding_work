@@ -1,0 +1,42 @@
+* 使用技術
+- SQLAlchemy
+  - MySQL
+- FastAPI
+- フロント何か
+
+* 想定アプリ
+- アニメのレビューを集めたサイト
+  - レビューの投稿
+  - レビューの取得
+  - レビューの削除
+  - （レビューの更新）
+** テーブル定義
+- users
+  - id
+  - name
+- works
+  - id
+  - name
+- reviews
+  - id
+  - user_id
+  - work_id
+  - star
+  - text
+  - created_at
+  - deleted_at
+** モデル定義
+- User
+  - id
+  - name
+- Work
+  - id
+  - name
+- Review
+  - id
+  - user_id
+  - work_id
+  - star
+  - text
+  - created_at
+  - deleted_at
