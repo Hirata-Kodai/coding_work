@@ -1,0 +1,5 @@
+isort
+pytest
+flake8
+black
+requests

@@ -3,4 +3,4 @@ uvicorn[standard]
 sqlalchemy
 PyMySQL[rsa]
 python-dotenv
-isort
+

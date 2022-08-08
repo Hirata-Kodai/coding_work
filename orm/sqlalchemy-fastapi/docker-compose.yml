@@ -2,7 +2,7 @@ services:
   python:
     build:
       context: ./
-      dockerfile: ./docker/python/Dockerfile
+      dockerfile: ./docker/python/Dockerfile.dev
     image: codingwork_sqlalchemy_python
     ports:
       - "8080:8080"
@@ -12,6 +12,8 @@ services:
     tty: true
     env_file:
       - app/.env
+    depends_on:
+      - mysql
 
   mysql:
     build:
