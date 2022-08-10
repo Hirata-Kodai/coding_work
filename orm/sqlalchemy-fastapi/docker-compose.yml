@@ -13,8 +13,9 @@ services:
     env_file:
       - app/.env
     depends_on:
-      - mysql
-    command: /bin/bash -c "sleep 15 && uvicorn main:app --reload --host 0.0.0.0 --port 8080"
+      mysql:
+        condition: service_healthy
+    command: /bin/bash -c "uvicorn main:app --reload --host 0.0.0.0 --port 8080"
 
   mysql:
     build:
@@ -25,11 +26,18 @@ services:
     ports:
       - "3306:3306"
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     volumes:
       - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d:delegated
       - ./docker/mysql/data/mysql:/etc/mysql/conf.d:delegated
     stdin_open: true
     tty: true
+    env_file:
+      - app/.env
     environment:
-      MYSQL_ROOT_PASSWORD: secret
       TZ: "Asia/Tokyo"
