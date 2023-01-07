@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def gauss_distribution(x, mu=0, sigma=1):
     return np.exp(-((x-mu)**2)/(2*sigma**2))
 

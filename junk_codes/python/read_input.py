@@ -7,7 +7,7 @@ def read_file_input():
         n = (first_line[0])
         mat = np.array([line.strip().split(' ') for line in f])
         mat = np.array([list(map(int, row)) for row in mat])
-        print(mat)
+    print(mat)
 
 
 def read_stdin():
@@ -17,5 +17,5 @@ def read_stdin():
 
 
 if __name__ == '__main__':
-    read_file_input()
+    # read_file_input()
     read_stdin()  # python read_input.py < sample_stdin.txt

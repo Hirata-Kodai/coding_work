@@ -1,0 +1,36 @@
+* リスト内包表記のネスト
+- 外側の for ループを先に書く
+#+begin_src python :results output 
+  import numpy as np
+  vss = np.arange(10).reshape((-1,2))
+  vss_unzip = [v for vs in vss for v in vs]
+  print(vss)
+  print(vss_unzip)
+#+end_src
+
+#+RESULTS:
+: [[0 1]
+:  [2 3]
+:  [4 5]
+:  [6 7]
+:  [8 9]]
+: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+※numpy リストの平坦化は flatten() メソッドがある
+* リスト内包表記の条件判定
+- if 文のみ（フィルタリング目的）
+  #+begin_src python :results output 
+	values = [(x, y) for x in range(5) if x % 2 for y in range(5) if not y % 2]
+	print(values)
+  #+end_src
+
+  #+RESULTS:
+  : [(1, 0), (1, 2), (1, 4), (3, 0), (3, 2), (3, 4)]
+
+- if else（イテラブルの中身によって処理を変えたいとき）
+  #+begin_src python :results output 
+	odd_even_list = [(x, 'odd') if x % 2 else (x, 'even') for x in range(11)]
+	print(odd_even_list)
+  #+end_src
+
+  #+RESULTS:
+  : [(0, 'even'), (1, 'odd'), (2, 'even'), (3, 'odd'), (4, 'even'), (5, 'odd'), (6, 'even'), (7, 'odd'), (8, 'even'), (9, 'odd'), (10, 'even')]
