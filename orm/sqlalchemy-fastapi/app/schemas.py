@@ -33,10 +33,7 @@ class User(BaseModel):
 
     @staticmethod
     def from_dict(source):
-        return User(
-            id=source[UserKey.id],
-            name=source[UserKey.name]
-        )
+        return User(id=source[UserKey.id], name=source[UserKey.name])
 
 
 class Work(BaseModel):
@@ -48,10 +45,7 @@ class Work(BaseModel):
 
     @staticmethod
     def from_dict(source):
-        return Work(
-            id=source[WorkKey.id],
-            name=source[WorkKey.name]
-        )
+        return Work(id=source[WorkKey.id], name=source[WorkKey.name])
 
 
 class Review(BaseModel):
@@ -75,7 +69,8 @@ class Review(BaseModel):
             star=source[RevieKey.star],
             text=source[RevieKey.text],
             created_at=source[RevieKey.created_at],
-            deleted_at=None)
+            deleted_at=None,
+        )
 
 
 class UserCreate(BaseModel):

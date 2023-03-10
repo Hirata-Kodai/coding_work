@@ -6,10 +6,16 @@
 
 * 想定アプリ
 - アニメのレビューを集めたサイト
-  - レビューの投稿
-  - レビューの取得
-  - レビューの削除
-  - （レビューの更新）
+  - 作品レビュー
+	- レビューの投稿
+	- レビューの削除
+	- （レビューの更新）
+  - 作品情報の閲覧
+	- 名前
+	- 付いているレビュー
+	- （画像）
+  - 名前からの作品検索
+  - ログイン機能
 ** テーブル定義
 - users
   - id
@@ -40,3 +46,22 @@
   - text
   - created_at
   - deleted_at
+* API エンドポイント
+|--------+--------------------+-------------------------|
+| method | path               | description             |
+| GET    | /users/{id}        | get the user by id      |
+| POST   | /user              | create a user           |
+| GET    | /works             | get all works           |
+| GET    | /works/{id}        | get the work by id      |
+| POST   | /work              | create a work           |
+| POST   | /review            | create a review         |
+| GET    | /reviews/{id}      | get the review by id    |
+| GET    | /work/{id}/reviews | get reviews of the work |
+|        |                    |                         |
+* テスト
+- 各エンドポイント
+  関数毎に
+  1) テスト用 DB を作成
+  2) 関数にテスト用 DB のセッションを渡す
+  3) テスト関数を走らせる
+  4) テスト用 DB を削除

@@ -19,21 +19,15 @@ def get_reviews(db: Session, skip: int = 0, limit: int = 100):
 
 # 個別取得
 def get_user_by_id(db: Session, id: int):
-    return db.query(models.User)\
-             .filter(models.User.id == id)\
-             .all()
+    return db.query(models.User).filter(models.User.id == id).all()
 
 
 def get_work_by_id(db: Session, id: int):
-    return db.query(models.Work)\
-             .filter(models.Work.id == id)\
-             .all()
+    return db.query(models.Work).filter(models.Work.id == id).all()
 
 
 def get_review_by_id(db: Session, id: int):
-    return db.query(models.Review)\
-             .filter(models.Review.id == id)\
-             .all()
+    return db.query(models.Review).filter(models.Review.id == id).all()
 
 
 # 作成
