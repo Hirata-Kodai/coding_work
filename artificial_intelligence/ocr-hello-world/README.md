@@ -27,7 +27,7 @@
     tesseract --list-langs
     ```
     
-    List of available languages (3):engosdsnumjpn
+    List of available languages (4):engosdsnumjpn
 
 
 ## コード実行例
