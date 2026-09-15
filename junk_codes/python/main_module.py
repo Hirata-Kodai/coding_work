@@ -1,2 +1,0 @@
-class SomeModule:
-    hoge: str
