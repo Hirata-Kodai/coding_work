@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://3fb7oq81fobw"]
+
+[ext_resource type="Script" uid="uid://d4gi3mfj0wn5u" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://os6ibxh7qmw" path="res://scripts/fighter_view.gd" id="2_fighter"]
+[ext_resource type="Script" uid="uid://cfciblqclbjg7" path="res://scripts/hud.gd" id="3_hud"]
+[ext_resource type="Script" uid="uid://d24ukkrwq4cju" path="res://scripts/sfx.gd" id="4_sfx"]
+
+[node name="Main" type="Node2D" unique_id=339367433]
+script = ExtResource("1_main")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1145632219]
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.13, 0.13, 0.16, 1)
+
+[node name="Ground" type="ColorRect" parent="." unique_id=1944340857]
+offset_top = 520.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.22, 0.2, 0.18, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1981431039]
+position = Vector2(576, 324)
+
+[node name="Fighter1" type="Node2D" parent="." unique_id=1217811764]
+script = ExtResource("2_fighter")
+
+[node name="Fighter2" type="Node2D" parent="." unique_id=27348310]
+script = ExtResource("2_fighter")
+body_color = Color(1, 0.45, 0.35, 1)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=153446758]
+script = ExtResource("3_hud")
+
+[node name="Sfx" type="Node" parent="." unique_id=2068164048]
+script = ExtResource("4_sfx")
