@@ -29,6 +29,9 @@ const MOVE_SPEED := 200.0 / 60.0  # px/frame（200px/秒）
 const ROUND_FRAMES := 30 * 60
 const HITSTUN_FRAMES := 18
 const DOWN_FRAMES := 40
+const WAKEUP_INVULN_FRAMES := 15  # 起き上がり直後、攻撃が当たらない時間
+const KNOCKBACK_HIT := 30.0  # 被弾で押される距離(px)
+const KNOCKBACK_DOWN := 110.0  # ダウンで押される距離(px)
 const BODY_HALF_WIDTH := 32.0
 
 

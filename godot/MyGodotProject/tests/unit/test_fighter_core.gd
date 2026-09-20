@@ -155,3 +155,57 @@ func test_state_dict_matches_spec_keys() -> void:
 	assert_eq(s.state, "idle")
 	f.step(press("low"))
 	assert_eq(f.get_state_dict().state, "attack_low")
+
+
+# --- 技の段階 ---
+
+func test_attack_phase_progression() -> void:
+	assert_eq(f.attack_phase(), "")
+	f.step(press("high"))  # frame 0: 発生
+	var d: Dictionary = Moves.DATA[Moves.Kind.HIGH]
+	var phases: Array[String] = []
+	for i in Moves.total_frames(Moves.Kind.HIGH):
+		phases.append(f.attack_phase())
+		f.step(idle())
+	assert_eq(phases.count("startup"), d.startup)
+	assert_eq(phases.count("active"), d.active)
+	assert_eq(phases.count("recovery"), d.recovery)
+	assert_eq(phases.slice(0, d.startup), Array(phases.slice(0, d.startup)).filter(func(p): return p == "startup"))
+
+
+func test_phase_progress_goes_from_zero_to_one() -> void:
+	f.step(press("low"))
+	assert_almost_eq(f.phase_progress(), 0.0, 0.001)
+	var d: Dictionary = Moves.DATA[Moves.Kind.LOW]
+	step_n(d.startup - 1, idle())  # 発生の最終フレーム
+	assert_almost_eq(f.phase_progress(), 1.0, 0.001)
+	f.step(idle())  # 持続の最初
+	assert_eq(f.attack_phase(), "active")
+	assert_almost_eq(f.phase_progress(), 0.0, 0.001)
+
+
+# --- 起き上がり無敵 ---
+
+func test_invulnerable_right_after_getting_up() -> void:
+	f.take_hit(10, true)
+	step_n(Moves.DOWN_FRAMES, idle())
+	assert_eq(f.state, FighterCore.State.IDLE)
+	assert_true(f.is_invulnerable())
+	step_n(Moves.WAKEUP_INVULN_FRAMES - 1, idle())
+	assert_true(f.is_invulnerable())
+	f.step(idle())
+	assert_false(f.is_invulnerable())
+
+
+func test_not_invulnerable_after_hitstun() -> void:
+	f.take_hit(10, false)
+	step_n(Moves.HITSTUN_FRAMES, idle())
+	assert_false(f.is_invulnerable())
+
+
+func test_can_act_while_invulnerable() -> void:
+	f.take_hit(10, true)
+	step_n(Moves.DOWN_FRAMES, idle())
+	f.step(press("high"))
+	assert_eq(f.state, FighterCore.State.ATTACK)
+	assert_true(f.is_invulnerable())

@@ -17,9 +17,9 @@ func press(key: String) -> Dictionary:
 	return i
 
 
-## 両者を密着させる（p1 を右へ歩かせる）
+## 両者を密着させる（p1 を右へ歩かせ、触れたら止める）
 func close_in() -> void:
-	for _i in 600:
+	while m.p2.x - m.p1.x > Moves.BODY_HALF_WIDTH * 2 + 0.001:
 		m.step(press("right"), idle())
 	m.step(idle(), idle())
 
@@ -185,3 +185,58 @@ func test_time_up_equal_hp_is_draw() -> void:
 	var ups := events.filter(func(e): return e.type == "time_up")
 	assert_eq(ups[0].winner, 0)
 	assert_eq(m.winner, 0)
+
+
+# --- ノックバック ---
+
+func test_hit_pushes_defender_back() -> void:
+	close_in()
+	var before := m.p2.x
+	run(press("high"), idle(), 10)
+	assert_almost_eq(m.p2.x - before, Moves.KNOCKBACK_HIT, 0.001)
+
+
+func test_knockdown_pushes_further() -> void:
+	close_in()
+	var before := m.p2.x
+	run(press("throw"), idle(), 20)
+	assert_almost_eq(m.p2.x - before, Moves.KNOCKBACK_DOWN, 0.001)
+
+
+func test_cornered_defender_pushes_attacker_back_instead() -> void:
+	# p2 を右端まで追い込む
+	for _i in 1200:
+		m.step(press("right"), idle())
+	m.step(idle(), idle())
+	assert_almost_eq(m.p2.x, m.p2.max_x, 0.001)
+	var p1_before := m.p1.x
+	run(press("high"), idle(), 10)
+	assert_almost_eq(m.p2.x, m.p2.max_x, 0.001)
+	assert_almost_eq(p1_before - m.p1.x, Moves.KNOCKBACK_HIT, 0.001)
+
+
+func test_high_spam_does_not_loop_forever() -> void:
+	close_in()
+	var events := []
+	for _i in 120:
+		var i := press("high")
+		i.right = true
+		events.append_array(m.step(i, idle()))
+	var h := hits(events)
+	assert_gt(h.size(), 0)
+	# ノックバックで間合いが切れるので、2発目以降が全部繋がることはない
+	var max_combo: int = h.map(func(e): return e.hit_count).max()
+	assert_lt(max_combo, 4)
+
+
+# --- 起き上がり ---
+
+func test_attack_whiffs_on_wakeup() -> void:
+	close_in()
+	run(press("throw"), idle(), Moves.total_frames(Moves.Kind.THROW))
+	# p2 が起きるまで p1 は歩いて追いかける
+	while m.p2.state == FighterCore.State.DOWN:
+		m.step(press("right"), idle())
+	assert_true(m.p2.is_invulnerable())
+	var events := run(press("high"), idle(), 10)
+	assert_eq(hits(events).size(), 0)

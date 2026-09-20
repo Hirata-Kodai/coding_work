@@ -103,6 +103,8 @@ func _connects(attacker: FighterCore, defender: FighterCore) -> bool:
 	var hi := maxf(near, far)
 	if defender.x + Moves.BODY_HALF_WIDTH < lo or defender.x - Moves.BODY_HALF_WIDTH > hi:
 		return false
+	if defender.is_invulnerable():
+		return false
 	match defender.state:
 		FighterCore.State.CROUCH:
 			if CombatRules.crouch_avoids(attacker.move):
@@ -125,6 +127,7 @@ func _apply_hit(attacker: FighterCore, defender: FighterCore, target: int, trade
 	var knockdown: bool = trade or attacker.move == Moves.Kind.THROW
 	attacker.has_hit = true
 	defender.take_hit(dmg, knockdown)
+	_knock_back(attacker, defender, Moves.KNOCKBACK_DOWN if knockdown else Moves.KNOCKBACK_HIT)
 	return {
 		"type": "hit",
 		"target": target,
@@ -135,6 +138,17 @@ func _apply_hit(attacker: FighterCore, defender: FighterCore, target: int, trade
 		"x": defender.x,
 		"trade": trade,
 	}
+
+
+## 被弾側を攻撃側から遠ざける。壁で押せない分は攻撃側が下がる（画面端の連打を切るため）。
+func _knock_back(attacker: FighterCore, defender: FighterCore, distance: float) -> void:
+	var dir := 1 if defender.x >= attacker.x else -1
+	var target := defender.x + dir * distance
+	var clamped := clampf(target, defender.min_x, defender.max_x)
+	defender.x = clamped
+	var remainder := absf(target - clamped)
+	if remainder > 0.0:
+		attacker.x = clampf(attacker.x - dir * remainder, attacker.min_x, attacker.max_x)
 
 
 func _check_end() -> Array:

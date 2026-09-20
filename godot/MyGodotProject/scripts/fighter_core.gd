@@ -21,6 +21,7 @@ var move: Moves.Kind = Moves.Kind.HIGH  # ATTACK 中のみ有効
 var frame: int = 0  # 現在の状態に入ってからのフレーム数
 var combo_count: int = 0  # 被弾側で数える連続ヒット数。硬直が切れたら0
 var has_hit: bool = false  # この攻撃が既に当たったか（多段ヒット防止）
+var invuln_frames: int = 0  # 起き上がり無敵の残りフレーム
 var min_x: float = -INF
 var max_x: float = INF
 
@@ -37,6 +38,8 @@ static func empty_input() -> Dictionary:
 
 
 func step(input: Dictionary) -> void:
+	if invuln_frames > 0:
+		invuln_frames -= 1
 	match state:
 		State.IDLE, State.WALK, State.CROUCH:
 			_step_free(input)
@@ -53,6 +56,7 @@ func step(input: Dictionary) -> void:
 			frame += 1
 			if frame >= Moves.DOWN_FRAMES:
 				combo_count = 0
+				invuln_frames = Moves.WAKEUP_INVULN_FRAMES
 				_enter(State.IDLE)
 	_prev_input = input.duplicate()
 
@@ -96,9 +100,42 @@ func is_attack_active() -> bool:
 	return frame >= d.startup and frame < d.startup + d.active
 
 
+## 技の段階。"startup" / "active" / "recovery"、攻撃中でなければ ""。
+func attack_phase() -> String:
+	if state != State.ATTACK:
+		return ""
+	var d: Dictionary = Moves.DATA[move]
+	if frame < d.startup:
+		return "startup"
+	if frame < d.startup + d.active:
+		return "active"
+	return "recovery"
+
+
+## 今の段階の進み具合 0.0〜1.0（段階の最初のフレームが 0、最後が 1）。
+func phase_progress() -> float:
+	var d: Dictionary = Moves.DATA[move]
+	var start := 0
+	var length: int = d.startup
+	match attack_phase():
+		"active":
+			start = d.startup
+			length = d.active
+		"recovery":
+			start = d.startup + d.active
+			length = d.recovery
+		"":
+			return 0.0
+	return 0.0 if length <= 1 else float(frame - start) / float(length - 1)
+
+
 ## 攻撃判定の先端の x 座標。
 func attack_front_x() -> float:
 	return x + facing * (Moves.BODY_HALF_WIDTH + Moves.DATA[move].reach)
+
+
+func is_invulnerable() -> bool:
+	return invuln_frames > 0
 
 
 func take_hit(damage: int, knockdown: bool) -> void:
