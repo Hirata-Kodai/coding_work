@@ -13,8 +13,9 @@ const SHAKE_AMPLITUDE := 6.0
 const SHAKE_FRAMES := 6
 
 @onready var _camera: Camera2D = $Camera2D
-@onready var _view1: FighterView = $Fighter1
-@onready var _view2: FighterView = $Fighter2
+@onready var _camera3d: Camera3D = $World/Camera3D
+@onready var _view1: Fighter3DView = $World/Fighter1
+@onready var _view2: Fighter3DView = $World/Fighter2
 @onready var _hud: Hud = $HUD
 @onready var _sfx: Sfx = $Sfx
 
@@ -29,8 +30,6 @@ var _last_result := 0  # 直前の試合の勝者
 
 
 func _ready() -> void:
-	_view1.position.y = GROUND_Y
-	_view2.position.y = GROUND_Y
 	_start_match()
 
 
@@ -76,15 +75,22 @@ func _handle_event(ev: Dictionary) -> void:
 func _on_hit(ev: Dictionary) -> void:
 	_hitstop_frames = maxi(_hitstop_frames, ev.hitstop)
 	_shake()
-	var target: FighterView = _view2 if ev.target == 2 else _view1
+	var target: Fighter3DView = _view2 if ev.target == 2 else _view1
 	target.flash(2)
 	_sfx.play_hit(ev.kind, ev.hit_count)
 	DamageNumber.spawn(self, Vector2(ev.x, GROUND_Y - 120), ev.damage, ev.hit_count)
 
 
 func _shake() -> void:
-	_camera.offset = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized() * SHAKE_AMPLITUDE
-	create_tween().tween_property(_camera, "offset", Vector2.ZERO, SHAKE_FRAMES / 60.0)
+	var offset := Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized() * SHAKE_AMPLITUDE
+	_camera.offset = offset
+	# 3D カメラは m 単位、2D の y は下向きなので符号を反転
+	_camera3d.h_offset = offset.x / Fighter3DView.PX_PER_M
+	_camera3d.v_offset = -offset.y / Fighter3DView.PX_PER_M
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(_camera, "offset", Vector2.ZERO, SHAKE_FRAMES / 60.0)
+	tween.tween_property(_camera3d, "h_offset", 0.0, SHAKE_FRAMES / 60.0)
+	tween.tween_property(_camera3d, "v_offset", 0.0, SHAKE_FRAMES / 60.0)
 
 
 func _finish_match(winner: int, message: String) -> void:

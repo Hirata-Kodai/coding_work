@@ -62,6 +62,7 @@ func step(input: Dictionary) -> void:
 
 
 func _step_free(input: Dictionary) -> void:
+	frame += 1  # 同じ状態が続く間の経過フレーム。状態が変われば _enter で 0 に戻る
 	var pressed_move := _newly_pressed_move(input)
 	if pressed_move != -1:
 		move = pressed_move as Moves.Kind
