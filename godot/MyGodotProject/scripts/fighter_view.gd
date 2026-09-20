@@ -1,26 +1,27 @@
 class_name FighterView
 extends Node2D
-## FighterCore の状態を四角形で描く。ロジックは持たない。
-
-const BODY_W := Moves.BODY_HALF_WIDTH * 2
-const BODY_H := 160.0
-const CROUCH_H := 100.0
-const DOWN_H := 40.0
-const HITBOX_H := 30.0
+## FighterCore の状態を四角形で描く。姿勢の計算は FighterPose に任せ、ここは矩形に流すだけ。
 
 @export var body_color := Color(0.35, 0.65, 1.0)
+@export var show_hitbox := false  # デバッグ用: 持続フレーム中の攻撃判定を赤く重ねる
 
+var _pivot: Node2D  # 足元を原点にした回転軸
 var _body: ColorRect
+var _limb: ColorRect
 var _hitbox: ColorRect
 var _flash_frames := 0
 
 
 func _ready() -> void:
+	_pivot = Node2D.new()
+	add_child(_pivot)
+	_limb = ColorRect.new()
+	_pivot.add_child(_limb)
 	_body = ColorRect.new()
 	_body.color = body_color
-	add_child(_body)
+	_pivot.add_child(_body)
 	_hitbox = ColorRect.new()
-	_hitbox.color = Color(1.0, 0.3, 0.2, 0.7)
+	_hitbox.color = Color(1.0, 0.3, 0.2, 0.5)
 	_hitbox.visible = false
 	add_child(_hitbox)
 
@@ -32,35 +33,56 @@ func flash(frames: int = 2) -> void:
 
 func sync(core: FighterCore) -> void:
 	position.x = core.x
-	var h := BODY_H
-	match core.state:
-		FighterCore.State.CROUCH:
-			h = CROUCH_H
-		FighterCore.State.DOWN:
-			h = DOWN_H
-	var w := BODY_W if core.state != FighterCore.State.DOWN else BODY_W * 2
-	_body.size = Vector2(w, h)
-	_body.position = Vector2(-w / 2, -h)
+	var pose := FighterPose.compute(core)
 
-	if _flash_frames > 0:
-		_flash_frames -= 1
-		_body.color = Color.WHITE
-	elif core.state == FighterCore.State.HITSTUN or core.state == FighterCore.State.DOWN:
-		_body.color = body_color.darkened(0.4)
-	elif core.hp <= CombatRules.COMEBACK_HP:
-		_body.color = body_color.lerp(Color.RED, 0.4)
-	else:
-		_body.color = body_color
+	_pivot.position.x = pose.lean_x
+	_pivot.rotation_degrees = pose.tilt
+	_body.size = Vector2(pose.body_w, pose.body_h)
+	_body.position = Vector2(-pose.body_w / 2, -pose.body_h)
+	_body.color = _body_color_for(core, pose)
 
-	# 攻撃判定の可視化（持続フレーム中のみ）
-	_hitbox.visible = core.is_attack_active()
+	var limb: Dictionary = pose.limb
+	_limb.visible = limb.visible
+	if limb.visible:
+		var half: float = pose.body_w / 2.0
+		var length: float = limb.length
+		var x0: float = half if core.facing > 0 else -half - length
+		_limb.position = Vector2(x0, limb.y - limb.thickness / 2)
+		_limb.size = Vector2(length, limb.thickness)
+		_limb.color = _limb_color_for(pose.phase)
+
+	_hitbox.visible = show_hitbox and core.is_attack_active()
 	if _hitbox.visible:
 		var reach: float = Moves.DATA[core.move].reach
-		var y := -BODY_H * 0.7
-		if core.move == Moves.Kind.LOW:
-			y = -BODY_H * 0.2
-		elif core.move == Moves.Kind.THROW:
-			y = -BODY_H * 0.45
 		var x0 := Moves.BODY_HALF_WIDTH if core.facing > 0 else -Moves.BODY_HALF_WIDTH - reach
-		_hitbox.position = Vector2(x0, y)
-		_hitbox.size = Vector2(reach, HITBOX_H)
+		_hitbox.position = Vector2(x0, limb.y - 15)
+		_hitbox.size = Vector2(reach, 30)
+
+
+func _body_color_for(core: FighterCore, pose: Dictionary) -> Color:
+	if _flash_frames > 0:
+		_flash_frames -= 1
+		return Color.WHITE
+	var c := body_color
+	if core.hp <= CombatRules.COMEBACK_HP:
+		c = c.lerp(Color.RED, 0.4)
+	if core.is_invulnerable() and int(core.invuln_frames / 3.0) % 2 == 0:
+		c.a = 0.35  # 起き上がり無敵は点滅で示す
+	match core.state:
+		FighterCore.State.HITSTUN, FighterCore.State.DOWN:
+			return c.darkened(0.4)
+	match pose.phase:
+		"startup":
+			return c.lightened(0.35)  # 構えは明るく: 読める合図
+		"recovery":
+			return c.darkened(0.25)  # 隙は暗く: 殴れる合図
+	return c
+
+
+func _limb_color_for(phase: String) -> Color:
+	match phase:
+		"active":
+			return Color(1.0, 0.95, 0.5)  # 判定中は目立つ黄色
+		"startup":
+			return body_color.lightened(0.5)
+	return body_color.darkened(0.15)
