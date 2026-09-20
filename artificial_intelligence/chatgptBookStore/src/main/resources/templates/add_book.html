@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Book</title>
+</head>
+<body>
+<h1>Add Book</h1>
+<form method="POST" th:action="@{/books/add}">
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br>
+    <label for="author">Author:</label><br>
+    <input type="text" id="author" name="author"><br>
+    <label for="price">Price:</label><br>
+    <input type="number" id="price" name="price"><br>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

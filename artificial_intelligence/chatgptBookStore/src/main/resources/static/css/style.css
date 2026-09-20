@@ -1,0 +1,27 @@
+/* style.css */
+
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 2em;
+  text-align: center;
+  margin-top: 1em;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 auto;
+}
+
+th, td {
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
