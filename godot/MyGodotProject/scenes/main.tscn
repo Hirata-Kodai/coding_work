@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/fighter_3d_view.gd" id="2_fighter"]
 [ext_resource type="Script" path="res://scripts/hud.gd" id="3_hud"]
 [ext_resource type="Script" path="res://scripts/sfx.gd" id="4_sfx"]
+[ext_resource type="Script" path="res://scripts/hitbox_debug.gd" id="5_debug"]
 
 [sub_resource type="Environment" id="env"]
 background_mode = 1
@@ -47,6 +48,9 @@ offset_top = 520.0
 offset_right = 1152.0
 offset_bottom = 648.0
 color = Color(0.22, 0.2, 0.18, 1)
+
+[node name="HitboxDebug" type="Node2D" parent="."]
+script = ExtResource("5_debug")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_hud")

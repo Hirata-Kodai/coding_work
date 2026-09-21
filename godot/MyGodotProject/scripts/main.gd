@@ -18,6 +18,7 @@ const SHAKE_FRAMES := 6
 @onready var _view2: Fighter3DView = $World/Fighter2
 @onready var _hud: Hud = $HUD
 @onready var _sfx: Sfx = $Sfx
+@onready var _hitbox_debug: HitboxDebug = $HitboxDebug
 
 var _match: MatchCore
 var _cpu: CpuBrain
@@ -127,5 +128,6 @@ func _enter_phase(phase: Phase) -> void:
 func _sync_views() -> void:
 	_view1.sync(_match.p1)
 	_view2.sync(_match.p2)
+	_hitbox_debug.update_from(_match)
 	_hud.set_hp(_match.p1.hp, _match.p2.hp)
 	_hud.set_time(_match.time_left_frames / 60.0)

@@ -61,6 +61,26 @@ func test_attack_maps_whole_move_onto_trimmed_clip() -> void:
 	assert_almost_eq(FighterAnim.select(f).time, c.end, 0.001)
 
 
+func test_first_active_frame_shows_impact_pose() -> void:
+	for pair in [["high", Moves.Kind.HIGH], ["low", Moves.Kind.LOW], ["throw", Moves.Kind.THROW]]:
+		var g := FighterCore.new(100.0, 1)
+		g.step(press(pair[0]))
+		step_n_on(g, Moves.DATA[pair[1]].startup)
+		assert_eq(g.attack_phase(), "active")
+		assert_almost_eq(FighterAnim.select(g).time, FighterAnim.CLIPS[pair[0]].impact, 0.001, pair[0])
+
+
+func step_n_on(g: FighterCore, n: int) -> void:
+	for _i in n:
+		g.step(idle())
+
+
+func test_attack_clips_have_impact_between_start_and_end() -> void:
+	for name in ["high", "low", "throw"]:
+		var c: Dictionary = FighterAnim.CLIPS[name]
+		assert_between(c.impact, c.start, c.end, name)
+
+
 func test_each_move_has_its_own_clip() -> void:
 	var g := FighterCore.new(100.0, 1)
 	g.step(press("low"))
