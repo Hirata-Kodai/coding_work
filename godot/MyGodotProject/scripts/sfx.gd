@@ -14,7 +14,7 @@ const STREAMS := {
 }
 
 const COUNTER_VOLUME_DB := 0.0
-const COUNTER_PITCH := 0.8  # glass_004 はそのままだと高すぎるので下げる
+const COUNTER_PITCH := 0.5  # glass_004 はそのままだと高すぎるので下げる
 const COUNTER_TAIL := 0.3  # 余韻はこの秒数でフェードアウトして切る
 
 var _players: Dictionary = {}
