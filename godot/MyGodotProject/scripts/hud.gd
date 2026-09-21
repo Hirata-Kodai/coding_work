@@ -8,6 +8,7 @@ var _timer: Label
 var _streak: Label
 var _best: Label
 var _message: Label
+var _toast: Label
 
 
 func _ready() -> void:
@@ -20,9 +21,12 @@ func _ready() -> void:
 	_best.modulate = Color(1, 1, 1, 0.6)
 	_message = _make_label(Vector2(0, 240), 96, HORIZONTAL_ALIGNMENT_CENTER)
 	_message.size.x = 1152
+	_toast = _make_label(Vector2(0, 150), 28, HORIZONTAL_ALIGNMENT_CENTER)
+	_toast.size.x = 1152
+	_toast.modulate.a = 0.0
 	var help := _make_label(Vector2(0, 600), 20, HORIZONTAL_ALIGNMENT_CENTER)
 	help.size.x = 1152
-	help.text = "←→ 移動    ↓ しゃがみ    [Z] 上段    [X] 下段    [C] 投げ    [F1] 判定表示"
+	help.text = "←→ 移動    ↓ しゃがみ    [Z] 上段    [X] 下段    [C] 投げ    [F1] 判定表示    [F2] カウンター音切替"
 	help.modulate = Color(1, 1, 1, 0.7)
 
 
@@ -42,6 +46,14 @@ func set_streak(streak: int, best: int) -> void:
 
 func set_message(text: String) -> void:
 	_message.text = text
+
+
+## 一時的な通知。1.5 秒で消える。
+func show_toast(text: String) -> void:
+	_toast.text = text
+	_toast.modulate.a = 1.0
+	var tween := _toast.create_tween()
+	tween.tween_property(_toast, "modulate:a", 0.0, 0.5).set_delay(1.0)
 
 
 func _make_bar(pos: Vector2, right_to_left: bool) -> ProgressBar:

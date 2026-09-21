@@ -34,6 +34,11 @@ func _ready() -> void:
 	_start_match()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("debug_cycle_counter_sfx"):
+		_hud.show_toast("counter sfx: " + _sfx.cycle_counter_candidate())
+
+
 func _physics_process(_delta: float) -> void:
 	_phase_frames += 1
 	match _phase:

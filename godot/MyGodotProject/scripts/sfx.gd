@@ -15,7 +15,12 @@ const STREAMS := {
 
 const COUNTER_VOLUME_DB := 0.0  # 読み勝ちの当たりは打撃音にベルの余韻を重ねる
 
+## F2 で切り替えて試聴するカウンター音の候補。決まったら counter.ogg に採用してこの配列は消す。
+const COUNTER_CANDIDATES_DIR := "res://assets/sfx/counter_candidates/"
+
 var _players: Dictionary = {}
+var _candidates: PackedStringArray = []
+var _candidate_index := -1
 
 
 func _ready() -> void:
@@ -25,6 +30,24 @@ func _ready() -> void:
 		p.volume_db = -3.0
 		add_child(p)
 		_players[kind] = p
+
+
+## 候補ディレクトリの次の音をカウンター音に差し替えて鳴らし、ファイル名を返す。
+func cycle_counter_candidate() -> String:
+	if _candidates.is_empty():
+		var dir := DirAccess.open(COUNTER_CANDIDATES_DIR)
+		for f in dir.get_files():
+			if f.ends_with(".ogg"):
+				_candidates.append(f)
+		_candidates.sort()
+	if _candidates.is_empty():
+		return ""
+	_candidate_index = (_candidate_index + 1) % _candidates.size()
+	var file: String = _candidates[_candidate_index]
+	var c: AudioStreamPlayer = _players["counter"]
+	c.stream = load(COUNTER_CANDIDATES_DIR + file)
+	play_hit("high", 1, true)
+	return file
 
 
 func player_for(kind: String) -> AudioStreamPlayer:

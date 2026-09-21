@@ -45,3 +45,15 @@ func test_counter_hit_layers_counter_sound() -> void:
 func test_plain_hit_does_not_play_counter_sound() -> void:
 	sfx.play_hit("low", 1, false)
 	assert_false(sfx.player_for("counter").playing)
+
+
+func test_cycling_counter_candidates_swaps_stream_and_wraps() -> void:
+	var first := sfx.cycle_counter_candidate()
+	assert_ne(first, "")
+	var seen := [first]
+	var name := sfx.cycle_counter_candidate()
+	while name != first:
+		seen.append(name)
+		name = sfx.cycle_counter_candidate()
+	assert_gt(seen.size(), 1)
+	assert_true(sfx.player_for("counter").playing)
