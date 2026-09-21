@@ -13,14 +13,12 @@ const STREAMS := {
 	"counter": "res://assets/sfx/counter.ogg",
 }
 
-const COUNTER_VOLUME_DB := 0.0  # 読み勝ちの当たりは打撃音にベルの余韻を重ねる
-
-## F2 で切り替えて試聴するカウンター音の候補。決まったら counter.ogg に採用してこの配列は消す。
-const COUNTER_CANDIDATES_DIR := "res://assets/sfx/counter_candidates/"
+const COUNTER_VOLUME_DB := 0.0
+const COUNTER_PITCH := 0.8  # glass_004 はそのままだと高すぎるので下げる
+const COUNTER_TAIL := 0.3  # 余韻はこの秒数でフェードアウトして切る
 
 var _players: Dictionary = {}
-var _candidates: PackedStringArray = []
-var _candidate_index := -1
+var _counter_fade: Tween
 
 
 func _ready() -> void:
@@ -30,24 +28,6 @@ func _ready() -> void:
 		p.volume_db = -3.0
 		add_child(p)
 		_players[kind] = p
-
-
-## 候補ディレクトリの次の音をカウンター音に差し替えて鳴らし、ファイル名を返す。
-func cycle_counter_candidate() -> String:
-	if _candidates.is_empty():
-		var dir := DirAccess.open(COUNTER_CANDIDATES_DIR)
-		for f in dir.get_files():
-			if f.ends_with(".ogg"):
-				_candidates.append(f)
-		_candidates.sort()
-	if _candidates.is_empty():
-		return ""
-	_candidate_index = (_candidate_index + 1) % _candidates.size()
-	var file: String = _candidates[_candidate_index]
-	var c: AudioStreamPlayer = _players["counter"]
-	c.stream = load(COUNTER_CANDIDATES_DIR + file)
-	play_hit("high", 1, true)
-	return file
 
 
 func player_for(kind: String) -> AudioStreamPlayer:
@@ -64,9 +44,15 @@ func play_hit(kind: String, hit_count: int, counter: bool = false) -> void:
 	p.play()
 	if counter:
 		var c: AudioStreamPlayer = _players["counter"]
-		c.pitch_scale = 1.0 + 0.05 * mini(hit_count - 1, 5)
+		c.pitch_scale = COUNTER_PITCH + 0.04 * mini(hit_count - 1, 5)
 		c.volume_db = COUNTER_VOLUME_DB
 		c.play()
+		# ピッチを下げると再生が伸びて余韻が長くなるので、フェードで切る
+		if _counter_fade != null:
+			_counter_fade.kill()
+		_counter_fade = create_tween()
+		_counter_fade.tween_property(c, "volume_db", -40.0, COUNTER_TAIL).set_delay(0.1)
+		_counter_fade.tween_callback(c.stop)
 
 
 func play_win() -> void:

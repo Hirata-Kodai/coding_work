@@ -47,13 +47,9 @@ func test_plain_hit_does_not_play_counter_sound() -> void:
 	assert_false(sfx.player_for("counter").playing)
 
 
-func test_cycling_counter_candidates_swaps_stream_and_wraps() -> void:
-	var first := sfx.cycle_counter_candidate()
-	assert_ne(first, "")
-	var seen := [first]
-	var name := sfx.cycle_counter_candidate()
-	while name != first:
-		seen.append(name)
-		name = sfx.cycle_counter_candidate()
-	assert_gt(seen.size(), 1)
-	assert_true(sfx.player_for("counter").playing)
+func test_counter_sound_is_pitched_down_and_fades() -> void:
+	sfx.play_hit("high", 1, true)
+	var c := sfx.player_for("counter")
+	assert_almost_eq(c.pitch_scale, Sfx.COUNTER_PITCH, 0.001)
+	assert_lt(Sfx.COUNTER_PITCH, 1.0)
+	assert_between(Sfx.COUNTER_TAIL, 0.1, 0.5)

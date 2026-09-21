@@ -8,12 +8,5 @@ Kenney "Impact Sounds" (https://kenney.nl/assets/impact-sounds) — CC0 1.0（�
 | hit_low.ogg | impactPunch_heavy_000.ogg | 下段キック |
 | hit_throw.ogg | impactSoft_heavy_000.ogg | 投げ |
 | win.ogg | impactBell_heavy_000.ogg | 勝利（KO / 時間切れで 1P が勝ったとき） |
-| counter.ogg | impactBell_heavy_002.ogg | 3すくみに勝って当てたとき（打撃音に重ねる） |
+| counter.ogg | glass_004.ogg（Kenney "Interface Sounds"、CC0） | 3すくみに勝って当てたとき（打撃音に重ねる） |
 
-## カウンター音の候補（`counter_candidates/`、選定中）
-
-| ファイル | 出典パック |
-| --- | --- |
-| glass_004 / confirmation_002 / maximize_005 | Kenney "Interface Sounds" (CC0) |
-| powerUp5 / phaserUp3 / highUp | Kenney "Digital Audio" (CC0) |
-| bell_impactBell_heavy_002 | Kenney "Impact Sounds" (CC0) |

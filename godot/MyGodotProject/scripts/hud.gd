@@ -26,7 +26,7 @@ func _ready() -> void:
 	_toast.modulate.a = 0.0
 	var help := _make_label(Vector2(0, 600), 20, HORIZONTAL_ALIGNMENT_CENTER)
 	help.size.x = 1152
-	help.text = "←→ 移動    ↓ しゃがみ    [Z] 上段    [X] 下段    [C] 投げ    [F1] 判定表示    [F2] カウンター音切替"
+	help.text = "←→ 移動    ↓ しゃがみ    [Z] 上段    [X] 下段    [C] 投げ    [F1] 判定表示"
 	help.modulate = Color(1, 1, 1, 0.7)
 
 
