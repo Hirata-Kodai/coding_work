@@ -44,7 +44,7 @@ func _draw_hurtbox(core: FighterCore) -> void:
 		FighterCore.State.DOWN:
 			h = DOWN_H
 	var w := Moves.BODY_HALF_WIDTH * 2
-	var rect := Rect2(core.x - Moves.BODY_HALF_WIDTH, GROUND_Y - h, w, h)
+	var rect := Rect2(core.hurtbox_x() - Moves.BODY_HALF_WIDTH, GROUND_Y - h, w, h)
 	var color := Color(0.2, 1.0, 0.3, 0.25)
 	if core.is_invulnerable():
 		color = Color(0.5, 0.5, 1.0, 0.25)

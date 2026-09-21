@@ -101,7 +101,8 @@ func _connects(attacker: FighterCore, defender: FighterCore) -> bool:
 	var far := attacker.attack_front_x()
 	var lo := minf(near, far)
 	var hi := maxf(near, far)
-	if defender.x + Moves.BODY_HALF_WIDTH < lo or defender.x - Moves.BODY_HALF_WIDTH > hi:
+	var hx := defender.hurtbox_x()
+	if hx + Moves.BODY_HALF_WIDTH < lo or hx - Moves.BODY_HALF_WIDTH > hi:
 		return false
 	if defender.is_invulnerable():
 		return false

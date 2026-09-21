@@ -240,3 +240,24 @@ func test_attack_whiffs_on_wakeup() -> void:
 	assert_true(m.p2.is_invulnerable())
 	var events := run(press("high"), idle(), 10)
 	assert_eq(hits(events).size(), 0)
+
+
+# --- 攻撃中の前傾で差し返しが当たる ---
+
+func test_whiffed_throw_can_be_punished_from_slightly_further() -> void:
+	# 上段が届かないぎりぎりの距離に p2 を置く（食らい判定の前端までの距離 = reach + 少し）
+	var reach: float = Moves.DATA[Moves.Kind.HIGH].reach
+	var lean: float = Moves.DATA[Moves.Kind.THROW].lean
+	m.p1.x = 400.0
+	m.p2.x = 400.0 + Moves.BODY_HALF_WIDTH * 2 + reach + lean * 0.5
+	# 待機中の p2 には届かない
+	var whiff := run(press("high"), idle(), 20)
+	assert_eq(hits(whiff).size(), 0)
+	# p2 が投げを空振りして前傾している間なら届く
+	m.step(idle(), press("throw"))
+	var d: Dictionary = Moves.DATA[Moves.Kind.THROW]
+	run(idle(), idle(), d.startup)  # 持続に入る
+	assert_eq(m.p2.attack_phase(), "active")
+	var punish := run(press("high"), idle(), 10)
+	assert_eq(hits(punish).size(), 1)
+	assert_eq(hits(punish)[0].target, 2)

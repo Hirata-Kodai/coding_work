@@ -209,3 +209,32 @@ func test_can_act_while_invulnerable() -> void:
 	f.step(press("high"))
 	assert_eq(f.state, FighterCore.State.ATTACK)
 	assert_true(f.is_invulnerable())
+
+
+# --- 攻撃中の食らい判定の前傾 ---
+
+func test_hurtbox_stays_at_x_when_not_attacking() -> void:
+	assert_almost_eq(f.hurtbox_x(), f.x, 0.001)
+	f.step(press("down"))
+	assert_almost_eq(f.hurtbox_x(), f.x, 0.001)
+
+
+func test_hurtbox_leans_forward_from_active_frames_of_throw() -> void:
+	f.step(press("throw"))
+	var d: Dictionary = Moves.DATA[Moves.Kind.THROW]
+	assert_almost_eq(f.hurtbox_x(), f.x, 0.001)  # 発生中はまだ前に出ない
+	step_n(d.startup, idle())
+	assert_eq(f.attack_phase(), "active")
+	assert_almost_eq(f.hurtbox_x(), f.x + d.lean, 0.001)
+	step_n(d.active, idle())
+	assert_eq(f.attack_phase(), "recovery")
+	assert_almost_eq(f.hurtbox_x(), f.x + d.lean, 0.001)
+
+
+func test_lean_follows_facing() -> void:
+	var g := FighterCore.new(400.0, -1)
+	g.step(press("throw"))
+	var d: Dictionary = Moves.DATA[Moves.Kind.THROW]
+	for _i in d.startup:
+		g.step(idle())
+	assert_almost_eq(g.hurtbox_x(), g.x - d.lean, 0.001)

@@ -6,22 +6,23 @@ enum Kind { HIGH, LOW, THROW }
 ## 技ごとの数値。startup: 発生、active: 持続、recovery: 硬直、
 ## damage: 基礎ダメージ、hitstop: ヒット時に両者を止めるフレーム数、
 ## reach: 攻撃側の胴体の前端からさらに前方に届く距離(px)。
+## lean: 持続〜硬直の間に食らい判定が前にずれる量(px)。上体が前に倒れる技だけ持つ（差し返しが当たるように）。
 ## リーチと胴体幅は 3D モデルの骨の位置を実測して決めた（肩幅 34px、拳の先端は腰から 61px 等）。
 const DATA := {
 	Kind.HIGH: {
 		"name": "high",
 		"startup": 4, "active": 3, "recovery": 6,
-		"damage": 25, "hitstop": 8, "reach": 46,
+		"damage": 25, "hitstop": 8, "reach": 46, "lean": 0,
 	},
 	Kind.LOW: {
 		"name": "low",
 		"startup": 7, "active": 3, "recovery": 12,
-		"damage": 30, "hitstop": 8, "reach": 52,
+		"damage": 30, "hitstop": 8, "reach": 52, "lean": 0,
 	},
 	Kind.THROW: {
 		"name": "throw",
 		"startup": 12, "active": 2, "recovery": 20,
-		"damage": 45, "hitstop": 14, "reach": 40,
+		"damage": 45, "hitstop": 14, "reach": 40, "lean": 18,
 	},
 }
 

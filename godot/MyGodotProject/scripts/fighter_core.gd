@@ -130,6 +130,14 @@ func phase_progress() -> float:
 	return 0.0 if length <= 1 else float(frame - start) / float(length - 1)
 
 
+## 食らい判定の中心 x。技の持続〜硬直では上体が前に出るぶん前にずれる。
+func hurtbox_x() -> float:
+	match attack_phase():
+		"active", "recovery":
+			return x + facing * Moves.DATA[move].lean
+	return x
+
+
 ## 攻撃判定の先端の x 座標。
 func attack_front_x() -> float:
 	return x + facing * (Moves.BODY_HALF_WIDTH + Moves.DATA[move].reach)
