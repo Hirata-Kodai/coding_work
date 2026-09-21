@@ -78,7 +78,7 @@ func _on_hit(ev: Dictionary) -> void:
 	_shake()
 	var target: Fighter3DView = _view2 if ev.target == 2 else _view1
 	target.flash(2)
-	_sfx.play_hit(ev.kind, ev.hit_count)
+	_sfx.play_hit(ev.kind, ev.hit_count, ev.counter)
 	DamageNumber.spawn(self, Vector2(ev.x, GROUND_Y - 120), ev.damage, ev.hit_count)
 
 

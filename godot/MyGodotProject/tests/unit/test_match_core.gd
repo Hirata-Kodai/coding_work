@@ -261,3 +261,35 @@ func test_whiffed_throw_can_be_punished_from_slightly_further() -> void:
 	var punish := run(press("high"), idle(), 10)
 	assert_eq(hits(punish).size(), 1)
 	assert_eq(hits(punish)[0].target, 2)
+
+
+# --- 3すくみに勝った当たりは counter ---
+
+func test_plain_hit_is_not_counter() -> void:
+	close_in()
+	var h := hits(run(press("high"), idle(), 20))
+	assert_eq(h.size(), 1)
+	assert_false(h[0].counter)
+
+
+func test_hit_that_beats_opponents_move_is_counter() -> void:
+	close_in()
+	# p1 上段 vs p2 下段 → 下段が勝って p1 に当たる
+	var h := hits(run(press("high"), press("low"), 30))
+	assert_eq(h.size(), 1)
+	assert_eq(h[0].target, 1)
+	assert_true(h[0].counter)
+
+
+func test_hit_during_opponents_recovery_is_counter() -> void:
+	# 空振りした技の硬直中に当てるのも「読み勝ち」として扱う
+	# 投げ(reach 40)は届かず、上段(reach 46 + 前傾 18)は届く距離に置く
+	m.p1.x = 400.0
+	m.p2.x = 400.0 + Moves.BODY_HALF_WIDTH * 2 + 50.0
+	m.step(idle(), press("throw"))
+	var d: Dictionary = Moves.DATA[Moves.Kind.THROW]
+	run(idle(), idle(), d.startup + d.active)
+	assert_eq(m.p2.attack_phase(), "recovery")
+	var h := hits(run(press("high"), idle(), 10))
+	assert_eq(h.size(), 1)
+	assert_true(h[0].counter)

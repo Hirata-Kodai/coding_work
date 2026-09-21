@@ -10,7 +10,10 @@ const STREAMS := {
 	"low": "res://assets/sfx/hit_low.ogg",
 	"throw": "res://assets/sfx/hit_throw.ogg",
 	"win": "res://assets/sfx/win.ogg",
+	"counter": "res://assets/sfx/counter.ogg",
 }
+
+const COUNTER_VOLUME_DB := 2.0  # 読み勝ちの当たりは打撃音に金属音を重ねて抜けを良くする
 
 var _players: Dictionary = {}
 
@@ -29,12 +32,18 @@ func player_for(kind: String) -> AudioStreamPlayer:
 
 
 ## hit_count は連続何発目か(1始まり)。音程は CombatRules.pitch_scale と同じカウンタで決まる。
-func play_hit(kind: String, hit_count: int) -> void:
+## counter が true（3すくみに勝った当たり）なら金属音を重ねる。
+func play_hit(kind: String, hit_count: int, counter: bool = false) -> void:
 	var p: AudioStreamPlayer = _players.get(kind)
 	if p == null:
 		return
 	p.pitch_scale = BASE_PITCH * CombatRules.pitch_scale(hit_count)
 	p.play()
+	if counter:
+		var c: AudioStreamPlayer = _players["counter"]
+		c.pitch_scale = 1.2 + 0.05 * mini(hit_count - 1, 5)
+		c.volume_db = COUNTER_VOLUME_DB
+		c.play()
 
 
 func play_win() -> void:

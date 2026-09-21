@@ -126,6 +126,8 @@ func _apply_hit(attacker: FighterCore, defender: FighterCore, target: int, trade
 	var hit_count: int = defender.combo_count + 1
 	var dmg := CombatRules.damage(data.damage, hit_count, attacker.hp)
 	var knockdown: bool = trade or attacker.move == Moves.Kind.THROW
+	# 相手が技の最中（負ける技を出している、または空振りの硬直中）に当てた = 読み勝ち
+	var counter: bool = not trade and defender.state == FighterCore.State.ATTACK
 	attacker.has_hit = true
 	defender.take_hit(dmg, knockdown)
 	_knock_back(attacker, defender, Moves.KNOCKBACK_DOWN if knockdown else Moves.KNOCKBACK_HIT)
@@ -138,6 +140,7 @@ func _apply_hit(attacker: FighterCore, defender: FighterCore, target: int, trade
 		"hitstop": data.hitstop,
 		"x": defender.x,
 		"trade": trade,
+		"counter": counter,
 	}
 
 
