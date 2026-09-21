@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://cfciblqclbjg7" path="res://scripts/hud.gd" id="3_hud"]
 [ext_resource type="Script" uid="uid://d24ukkrwq4cju" path="res://scripts/sfx.gd" id="4_sfx"]
 [ext_resource type="Script" uid="uid://cnfmct7fqdo04" path="res://scripts/hitbox_debug.gd" id="5_debug"]
+[ext_resource type="Script" path="res://scripts/bgm.gd" id="7_bgm"]
 
 [ext_resource type="Texture2D" path="res://assets/backgrounds/dojo.jpg" id="6_dojo"]
 
@@ -64,3 +65,6 @@ script = ExtResource("3_hud")
 
 [node name="Sfx" type="Node" parent="." unique_id=634220427]
 script = ExtResource("4_sfx")
+
+[node name="Bgm" type="Node" parent="."]
+script = ExtResource("7_bgm")
