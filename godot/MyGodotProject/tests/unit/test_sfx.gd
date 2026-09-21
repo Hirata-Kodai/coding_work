@@ -9,7 +9,7 @@ func before_each() -> void:
 
 
 func test_each_kind_has_a_stream() -> void:
-	for kind in ["high", "low", "throw", "win"]:
+	for kind in ["high", "low", "throw", "win", "counter"]:
 		assert_not_null(sfx.player_for(kind).stream, kind)
 
 
@@ -34,3 +34,22 @@ func test_win_sound_uses_normal_pitch() -> void:
 func test_unknown_kind_is_ignored() -> void:
 	sfx.play_hit("nope", 1)
 	pass_test("no error")
+
+
+func test_counter_hit_layers_counter_sound() -> void:
+	sfx.play_hit("low", 1, true)
+	assert_true(sfx.player_for("counter").playing)
+	assert_true(sfx.player_for("low").playing)
+
+
+func test_plain_hit_does_not_play_counter_sound() -> void:
+	sfx.play_hit("low", 1, false)
+	assert_false(sfx.player_for("counter").playing)
+
+
+func test_counter_sound_is_pitched_down_and_fades() -> void:
+	sfx.play_hit("high", 1, true)
+	var c := sfx.player_for("counter")
+	assert_almost_eq(c.pitch_scale, Sfx.COUNTER_PITCH, 0.001)
+	assert_lt(Sfx.COUNTER_PITCH, 1.0)
+	assert_between(Sfx.COUNTER_TAIL, 0.1, 0.5)

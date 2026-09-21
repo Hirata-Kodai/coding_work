@@ -62,6 +62,7 @@ func step(input: Dictionary) -> void:
 
 
 func _step_free(input: Dictionary) -> void:
+	frame += 1  # 同じ状態が続く間の経過フレーム。状態が変われば _enter で 0 に戻る
 	var pressed_move := _newly_pressed_move(input)
 	if pressed_move != -1:
 		move = pressed_move as Moves.Kind
@@ -127,6 +128,14 @@ func phase_progress() -> float:
 		"":
 			return 0.0
 	return 0.0 if length <= 1 else float(frame - start) / float(length - 1)
+
+
+## 食らい判定の中心 x。技の持続〜硬直では上体が前に出るぶん前にずれる。
+func hurtbox_x() -> float:
+	match attack_phase():
+		"active", "recovery":
+			return x + facing * Moves.DATA[move].lean
+	return x
 
 
 ## 攻撃判定の先端の x 座標。

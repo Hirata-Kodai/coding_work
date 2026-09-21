@@ -1,36 +1,59 @@
-[gd_scene format=3 uid="uid://3fb7oq81fobw"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://d4gi3mfj0wn5u" path="res://scripts/main.gd" id="1_main"]
-[ext_resource type="Script" uid="uid://os6ibxh7qmw" path="res://scripts/fighter_view.gd" id="2_fighter"]
-[ext_resource type="Script" uid="uid://cfciblqclbjg7" path="res://scripts/hud.gd" id="3_hud"]
-[ext_resource type="Script" uid="uid://d24ukkrwq4cju" path="res://scripts/sfx.gd" id="4_sfx"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/fighter_3d_view.gd" id="2_fighter"]
+[ext_resource type="Script" path="res://scripts/hud.gd" id="3_hud"]
+[ext_resource type="Script" path="res://scripts/sfx.gd" id="4_sfx"]
+[ext_resource type="Script" path="res://scripts/hitbox_debug.gd" id="5_debug"]
 
-[node name="Main" type="Node2D" unique_id=339367433]
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.13, 0.13, 0.16, 1)
+ambient_light_source = 1
+ambient_light_color = Color(0.7, 0.7, 0.8, 1)
+ambient_light_energy = 0.6
+
+[node name="Main" type="Node2D"]
 script = ExtResource("1_main")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1145632219]
-offset_right = 1152.0
-offset_bottom = 648.0
-color = Color(0.13, 0.13, 0.16, 1)
+[node name="World" type="Node3D" parent="."]
 
-[node name="Ground" type="ColorRect" parent="." unique_id=1944340857]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
+environment = SubResource("env")
+
+[node name="Camera3D" type="Camera3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.76, 1.96, 10)
+projection = 1
+size = 6.48
+far = 50.0
+
+[node name="Sun" type="DirectionalLight3D" parent="World"]
+transform = Transform3D(0.866, -0.321, 0.383, 0, 0.766, 0.643, -0.5, -0.557, 0.663, 0, 5, 5)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Fighter1" type="Node3D" parent="World"]
+script = ExtResource("2_fighter")
+tint = Color(0.35, 0.65, 1, 0.2)
+
+[node name="Fighter2" type="Node3D" parent="World"]
+script = ExtResource("2_fighter")
+tint = Color(1, 0.45, 0.35, 0.2)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(576, 324)
+
+[node name="Ground" type="ColorRect" parent="."]
 offset_top = 520.0
 offset_right = 1152.0
 offset_bottom = 648.0
 color = Color(0.22, 0.2, 0.18, 1)
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1981431039]
-position = Vector2(576, 324)
+[node name="HitboxDebug" type="Node2D" parent="."]
+script = ExtResource("5_debug")
 
-[node name="Fighter1" type="Node2D" parent="." unique_id=1217811764]
-script = ExtResource("2_fighter")
-
-[node name="Fighter2" type="Node2D" parent="." unique_id=27348310]
-script = ExtResource("2_fighter")
-body_color = Color(1, 0.45, 0.35, 1)
-
-[node name="HUD" type="CanvasLayer" parent="." unique_id=153446758]
+[node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_hud")
 
-[node name="Sfx" type="Node" parent="." unique_id=2068164048]
+[node name="Sfx" type="Node" parent="."]
 script = ExtResource("4_sfx")
