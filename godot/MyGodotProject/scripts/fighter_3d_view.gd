@@ -9,8 +9,11 @@ const LIBRARY := "fighter"
 const PX_PER_M := 100.0
 const TARGET_HEIGHT_M := 1.75
 
-## 2体を見分けるための薄い色。p1 は青系、p2 は赤系。
+## 2体を見分けるための薄い色。p1 は青系、p2 は赤系。輪郭線にも使う。
 @export var tint := Color(0.35, 0.65, 1.0, 0.2)
+
+const OUTLINE_WIDTH := 0.00012  # モデルのローカル単位（175 倍される前）。画面上で約 2px
+const SHADOW_SIZE := Vector2(1.1, 0.24)  # 足元の影の幅と高さ (m)
 
 var _model: Node3D
 var _ap: AnimationPlayer
@@ -37,6 +40,49 @@ func _ready() -> void:
 	_overlay.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_overlay.albedo_color = tint
 	_mesh.material_overlay = _overlay
+	_add_outline()
+	_add_shadow()
+
+
+## 裏面だけ描く少し太らせたメッシュを重ねて輪郭線にする（inverted hull）。
+func _add_outline() -> void:
+	var outline: MeshInstance3D = _mesh.duplicate()
+	outline.name = "Outline"
+	outline.material_overlay = null
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.cull_mode = BaseMaterial3D.CULL_FRONT
+	m.grow = true
+	m.grow_amount = OUTLINE_WIDTH
+	m.albedo_color = Color(tint.r * 0.6, tint.g * 0.6, tint.b * 0.6)
+	outline.material_override = m
+	outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_mesh.get_parent().add_child(outline)
+	outline.skeleton = _mesh.skeleton
+
+
+## 足元に接地感を出す楕円の影。カメラが真横なので、地面に寝かせず正面向きの板に描く。
+func _add_shadow() -> void:
+	var tex := GradientTexture2D.new()
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(0.5, 1.0)
+	var g := Gradient.new()
+	g.set_color(0, Color(0, 0, 0, 0.9))
+	g.set_color(1, Color(0, 0, 0, 0.0))
+	tex.gradient = g
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.albedo_texture = tex
+	var quad := QuadMesh.new()
+	quad.size = SHADOW_SIZE
+	quad.material = m
+	var shadow := MeshInstance3D.new()
+	shadow.name = "Shadow"
+	shadow.mesh = quad
+	shadow.position = Vector3(0, SHADOW_SIZE.y * 0.25, -0.3)
+	add_child(shadow)
 
 
 ## Mixamo 経由で失われたテクスチャを Tripo の書き出しから戻す。

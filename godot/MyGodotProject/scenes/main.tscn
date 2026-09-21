@@ -11,6 +11,7 @@
 
 [sub_resource type="StandardMaterial3D" id="dojo_mat"]
 shading_mode = 0
+albedo_color = Color(0.6, 0.6, 0.66, 1)
 albedo_texture = ExtResource("6_dojo")
 
 [sub_resource type="QuadMesh" id="dojo_quad"]
@@ -44,8 +45,13 @@ far = 50.0
 
 [node name="Sun" type="DirectionalLight3D" parent="World" unique_id=1658457121]
 transform = Transform3D(0.866, -0.321, 0.383, 0, 0.766, 0.643, -0.5, -0.557, 0.663, 0, 5, 5)
-light_energy = 1.2
+light_energy = 1.6
 shadow_enabled = true
+
+[node name="Rim" type="DirectionalLight3D" parent="World"]
+transform = Transform3D(-0.866, -0.25, -0.433, 0, 0.866, -0.5, 0.5, -0.433, -0.75, 0, 5, -5)
+light_color = Color(0.7, 0.85, 1, 1)
+light_energy = 0.8
 
 [node name="Fighter1" type="Node3D" parent="World" unique_id=439176376]
 script = ExtResource("2_fighter")
