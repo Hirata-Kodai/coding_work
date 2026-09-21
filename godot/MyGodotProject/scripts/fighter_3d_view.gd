@@ -58,9 +58,22 @@ func _build_library() -> AnimationLibrary:
 		var src_ap: AnimationPlayer = src.find_child("AnimationPlayer", true, false)
 		var anim: Animation = src_ap.get_animation("mixamo_com").duplicate()
 		anim.loop_mode = Animation.LOOP_NONE
+		_strip_horizontal_root_motion(anim)
 		lib.add_animation(clip_name, anim)
 		src.free()
 	return lib
+
+
+## 腰の位置トラックから前後左右の移動を消して高さだけ残す。
+## 技の踏み込みやダウンの後退はキャラの位置 (MatchCore の x) と二重になって判定とズレるため。
+static func _strip_horizontal_root_motion(anim: Animation) -> void:
+	var track := anim.find_track("Skeleton3D:mixamorig_Hips", Animation.TYPE_POSITION_3D)
+	if track == -1:
+		return
+	var first: Vector3 = anim.track_get_key_value(track, 0)
+	for k in anim.track_get_key_count(track):
+		var v: Vector3 = anim.track_get_key_value(track, k)
+		anim.track_set_key_value(track, k, Vector3(first.x, v.y, first.z))
 
 
 ## 2フレームだけ白く塗る。

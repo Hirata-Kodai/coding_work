@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dwn7alxkvu6w6"
-path="res://.godot/imported/Knocked Down.fbx-a098a60e5a6c79a0ae420f0167fc4f34.scn"
+uid="uid://b2vvykaulyluy"
+path="res://.godot/imported/Stunned.fbx-c4cf0c4200d2dd2f82da6b9c6c7d79e0.scn"
 
 [deps]
 
-source_file="res://assets/models/character/Knocked Down.fbx"
-dest_files=["res://.godot/imported/Knocked Down.fbx-a098a60e5a6c79a0ae420f0167fc4f34.scn"]
+source_file="res://assets/models/character/Stunned.fbx"
+dest_files=["res://.godot/imported/Stunned.fbx-c4cf0c4200d2dd2f82da6b9c6c7d79e0.scn"]
 
 [params]
 

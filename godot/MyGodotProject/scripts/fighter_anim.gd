@@ -14,9 +14,9 @@ const CLIPS := {
 	"crouch": {"file": DIR + "Idle Crouching Aiming.fbx", "start": 0.0, "end": 2.1, "loop": true},
 	"high": {"file": DIR + "Lead Jab.fbx", "start": 0.2, "impact": 0.4, "end": 0.9, "loop": false},
 	"low": {"file": DIR + "Leg Sweep.fbx", "start": 0.3, "impact": 0.9, "end": 1.4, "loop": false},
-	"throw": {"file": DIR + "Goalie Throw.fbx", "start": 0.6, "impact": 1.7, "end": 2.6, "loop": false},
+	"throw": {"file": DIR + "Throw Object.fbx", "start": 0.2, "impact": 0.6, "end": 1.4, "loop": false},
 	"hit": {"file": DIR + "Hit To Body.fbx", "start": 0.1, "end": 0.9, "loop": false},
-	"down": {"file": DIR + "Knocked Down.fbx", "start": 0.3, "end": 2.2, "loop": false},
+	"down": {"file": DIR + "Stunned.fbx", "start": 0.0, "end": 2.0, "loop": false},
 	"getup": {"file": DIR + "Getting Up.fbx", "start": 0.4, "end": 2.4, "loop": false},
 }
 

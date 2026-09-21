@@ -6,7 +6,7 @@ extends Node2D
 const GROUND_Y := 520.0
 const STAND_H := 170.0
 const CROUCH_H := 100.0
-const DOWN_H := 40.0
+const DOWN_H := 130.0  # ダウンは Stunned（よろけ）クリップなので立ち姿に近い
 const BOX_H := 30.0
 const LIMB_HEIGHT := {Moves.Kind.HIGH: 0.7, Moves.Kind.LOW: 0.15, Moves.Kind.THROW: 0.5}
 
