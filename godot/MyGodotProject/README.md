@@ -9,7 +9,8 @@ Godot 4.7 / GDScript。
 
 ![PV](docs/pv.gif)
 
-音つきの全編（20秒）は [docs/pv.mp4](docs/pv.mp4)。
+音つきの全編（20秒）は **[Google Drive](https://drive.google.com/file/d/11HmDUJoIPFIW2EKvbky3mM6orIxV-_ab/view?usp=sharing)**（高画質）。
+リポジトリ内にも圧縮版を置いてある（[docs/pv.mp4](docs/pv.mp4)）。
 PV はゲーム内のシーンとして組んであり、`scenes/pv.tscn` を録画して作る（[docs/pv.md](docs/pv.md)）。
 
 ## 操作
