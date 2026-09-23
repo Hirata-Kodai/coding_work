@@ -64,7 +64,7 @@ const SEGMENTS := [
 			[46, 1, "high"], [46, 2, "throw"],
 			[69, 1, "high"], [69, 2, "throw"],
 		],
-		"captions": [[60, "読み勝てば 一方的に押し込める"]],
+		"captions": [[0, "連続ヒットで 爽快感 UP ！"]],
 	},
 	{
 		"name": "finish",
@@ -76,7 +76,7 @@ const SEGMENTS := [
 	{
 		"name": "outro",
 		"steps": 0, "frames": 296, "slow": 1, "zoom": 2.0,
-		"captions": [[15, "K.O."], [85, "3  WIN  STREAK"], [160, "コマンド入力なし  コンボなし"], [235, "負けても3秒で次が始まる"]],
+		"captions": [[15, "K.O."], [85, "3  WIN  STREAK"], [160, "1試合 30秒"], [235, "負けても3秒で次が始まる"]],
 	},
 ]
 
