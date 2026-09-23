@@ -45,8 +45,9 @@ const SEGMENTS := [
 	},
 	{
 		"name": "combo",
-		"steps": 15, "slow": 1, "zoom": 1.6,
-		"setup": {"gap": TOUCH_GAP},
+		"steps": 15, "slow": 2, "zoom": 1.6,
+		# 読み合い区間で減った体力を戻す。KO すると試合が止まって絵が固まるため
+		"setup": {"gap": TOUCH_GAP, "p1_hp": Moves.MAX_HP, "p2_hp": Moves.MAX_HP},
 		"presses": [[0, 1, "high"]],
 		"captions": [[0, "当たれば 止まる・揺れる・光る"]],
 	},
@@ -55,7 +56,15 @@ const SEGMENTS := [
 		"name": "combo_slow",
 		"steps": 25, "slow": 3, "zoom": 1.6,
 		"presses": [[0, 1, "high"]],
-		"captions": [[30, "連続ヒットで ダメージも音程も上がる"]],
+		"captions": [[50, "連続ヒットで 爽快感 UP ！"]],
+	},
+	{
+		# キャプションを出している間を止め絵にしないため、踏み込んでもう一発
+		"name": "combo_tail",
+		"steps": 30, "slow": 2, "zoom": 1.6,
+		"holds": [[0, 10, 1, "right"]],
+		"presses": [[12, 1, "high"]],
+		"captions": [],
 	},
 	{
 		"name": "speed",
@@ -74,8 +83,8 @@ const SEGMENTS := [
 	},
 	{
 		"name": "outro",
-		"steps": 0, "frames": 285, "slow": 1, "zoom": 2.0,
-		"captions": [[20, "K.O."], [110, "3  WIN  STREAK"], [200, "負けても3秒で次が始まる"]],
+		"steps": 0, "frames": 210, "slow": 1, "zoom": 2.0,
+		"captions": [[15, "K.O."], [75, "3  WIN  STREAK"], [145, "負けても3秒で次が始まる"]],
 	},
 ]
 

@@ -83,6 +83,10 @@ func test_combo_reaches_two_hits() -> void:
 	assert_gt(h[1].damage, h[0].damage)
 
 
+func test_combo_tail_lands_one_more_hit() -> void:
+	assert_eq(hits_of("combo_tail").size(), 1, "キャプション中も絵が動くこと")
+
+
 func test_speed_segment_has_several_exchanges() -> void:
 	assert_gte(hits_of("speed").size(), 3)
 
