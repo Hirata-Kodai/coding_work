@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pv.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/fighter_3d_view.gd" id="2_fighter"]
+[ext_resource type="Script" path="res://scripts/pv_hud.gd" id="3_hud"]
+[ext_resource type="Script" path="res://scripts/sfx.gd" id="4_sfx"]
+[ext_resource type="Script" path="res://scripts/bgm.gd" id="7_bgm"]
+
+[ext_resource type="Texture2D" path="res://assets/backgrounds/dojo.jpg" id="6_dojo"]
+
+[sub_resource type="StandardMaterial3D" id="dojo_mat"]
+shading_mode = 0
+albedo_color = Color(0.6, 0.6, 0.66, 1)
+albedo_texture = ExtResource("6_dojo")
+
+[sub_resource type="QuadMesh" id="dojo_quad"]
+material = SubResource("dojo_mat")
+size = Vector2(11.52, 6.48)
+
+[sub_resource type="Environment" id="env"]
+background_mode = 1
+background_color = Color(0.13, 0.13, 0.16, 1)
+ambient_light_source = 1
+ambient_light_color = Color(0.7, 0.7, 0.8, 1)
+ambient_light_energy = 0.6
+
+[node name="Pv" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="World" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
+environment = SubResource("env")
+
+[node name="Backdrop" type="MeshInstance3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.76, 1.96, -3)
+mesh = SubResource("dojo_quad")
+
+[node name="Camera3D" type="Camera3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.76, 1.96, 10)
+projection = 1
+size = 6.48
+far = 50.0
+
+[node name="Sun" type="DirectionalLight3D" parent="World"]
+transform = Transform3D(0.866, -0.321, 0.383, 0, 0.766, 0.643, -0.5, -0.557, 0.663, 0, 5, 5)
+light_energy = 1.6
+shadow_enabled = true
+
+[node name="Rim" type="DirectionalLight3D" parent="World"]
+transform = Transform3D(-0.866, -0.25, -0.433, 0, 0.866, -0.5, 0.5, -0.433, -0.75, 0, 5, -5)
+light_color = Color(0.7, 0.85, 1, 1)
+light_energy = 0.8
+
+[node name="Fighter1" type="Node3D" parent="World"]
+script = ExtResource("2_fighter")
+
+[node name="Fighter2" type="Node3D" parent="World"]
+script = ExtResource("2_fighter")
+tint = Color(1, 0.45, 0.35, 0.2)
+
+[node name="PvHud" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")
+
+[node name="Sfx" type="Node" parent="."]
+script = ExtResource("4_sfx")
+
+[node name="Bgm" type="Node" parent="."]
+script = ExtResource("7_bgm")
