@@ -15,6 +15,14 @@ func events_of(name: String) -> Array:
 	return []
 
 
+func state_of(name: String) -> Dictionary:
+	for r in runs:
+		if r.name == name:
+			return r
+	fail_test("no segment " + name)
+	return {}
+
+
 func hits_of(name: String) -> Array:
 	return events_of(name).filter(func(e): return e.type == "hit")
 
@@ -40,10 +48,10 @@ func test_press_lands_only_on_its_frame() -> void:
 func test_hold_spans_its_range() -> void:
 	var seg: Dictionary
 	for s in PvScript.SEGMENTS:
-		if s.name == "speed":
+		if s.name == "rush":
 			seg = s
 	assert_true(PvScript.input_at(seg, 10, 1).right)
-	assert_false(PvScript.input_at(seg, 40, 1).right)
+	assert_false(PvScript.input_at(seg, 30, 1).right)
 
 
 # --- キャプションどおりの出来事が実際に起きること ---
@@ -76,22 +84,51 @@ func test_high_beats_throw() -> void:
 	assert_true(h[0].counter)
 
 
-func test_combo_reaches_two_hits() -> void:
-	var h := hits_of("combo") + hits_of("combo_slow")
+# --- ここから決着までが一本の流れ ---
+
+func test_combo_opens_with_a_counter_then_a_second_hit() -> void:
+	var h := hits_of("combo")
 	assert_eq(h.size(), 2)
-	assert_eq(h[1].hit_count, 2, "2発目は連続ヒット補正が乗る")
-	assert_gt(h[1].damage, h[0].damage)
+	assert_true(h[0].counter, "1発目は相手の技に勝って当てる")
+	assert_eq(h[1].hit_count, 2, "2発目は被弾硬直中に入る")
+	assert_gt(h[1].damage, h[0].damage, "連続ヒット補正でダメージが上がる")
 
 
-func test_combo_tail_lands_one_more_hit() -> void:
-	assert_eq(hits_of("combo_tail").size(), 1, "キャプション中も絵が動くこと")
+func test_rush_lands_three_counters_in_a_row() -> void:
+	var h := hits_of("rush")
+	assert_eq(h.size(), 3)
+	for e in h:
+		assert_eq(e.target, 2)
+		assert_true(e.counter, "すべて読み勝ちのカウンター")
 
 
-func test_speed_segment_has_several_exchanges() -> void:
-	assert_gte(hits_of("speed").size(), 3)
+func test_flow_is_continuous_without_resetting_after_the_approach() -> void:
+	# combo で位置と体力を置いたあとは、決着まで一度も置き直さない
+	for seg in PvScript.SEGMENTS:
+		if seg.name in ["rush", "finish"]:
+			assert_false(seg.has("setup"), seg.name)
 
 
-func test_ko_segment_ends_the_match_with_p1_winning() -> void:
-	var kos := events_of("ko").filter(func(e): return e.type == "ko")
+func test_opponent_is_pushed_back_through_the_flow() -> void:
+	var after_combo := state_of("combo")
+	var after_rush := state_of("rush")
+	var after_finish := state_of("finish")
+	assert_gt(after_rush.p2_x, after_combo.p2_x, "rush で相手が後ろへ下がる")
+	assert_gt(after_finish.p2_x, after_rush.p2_x, "決着でさらに下がる")
+	assert_gt(after_rush.p1_x, after_combo.p1_x, "自分は前へ出続ける")
+
+
+func test_opponent_turns_red_before_the_finisher() -> void:
+	# 逆転補正の赤い光が点いた状態で決め技に入る
+	assert_lte(state_of("rush").p2_hp, CombatRules.COMEBACK_HP)
+	assert_gt(state_of("rush").p2_hp, 0, "rush の途中では倒し切らない")
+
+
+func test_finisher_is_a_counter_throw_that_ends_the_match() -> void:
+	var h := hits_of("finish")
+	assert_eq(h.size(), 1)
+	assert_eq(h[0].kind, "throw")
+	assert_true(h[0].counter)
+	var kos := events_of("finish").filter(func(e): return e.type == "ko")
 	assert_eq(kos.size(), 1)
 	assert_eq(kos[0].winner, 1)

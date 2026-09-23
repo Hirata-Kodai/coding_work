@@ -44,47 +44,39 @@ const SEGMENTS := [
 		"captions": [[40, "上段  ＞  投げ"]],
 	},
 	{
+		# ここから決着まで一本の流れ。踏み込んで初カウンター → 連続ヒット →
+		# カウンターを重ねて押し込む → 投げで決着、と続ける（途中で切らない）
 		"name": "combo",
-		"steps": 15, "slow": 2, "zoom": 1.6,
-		# 読み合い区間で減った体力を戻す。KO すると試合が止まって絵が固まるため
-		"setup": {"gap": TOUCH_GAP, "p1_hp": Moves.MAX_HP, "p2_hp": Moves.MAX_HP},
-		"presses": [[0, 1, "high"]],
-		"captions": [[0, "当たれば 止まる・揺れる・光る"]],
+		"steps": 75, "slow": 1, "zoom": 1.4,
+		"setup": {"gap": 200.0, "p1_hp": Moves.MAX_HP, "p2_hp": Moves.MAX_HP},
+		"holds": [[0, 44, 1, "right"]],
+		"presses": [[44, 1, "high"], [44, 2, "throw"], [58, 1, "high"]],
+		"captions": [[20, "当たれば 止まる・揺れる・光る"], [60, "連続ヒットで 爽快感 UP ！"]],
 	},
 	{
-		# 2発目は被弾硬直中に入るので連続ヒット補正が乗る。スローで見せる
-		"name": "combo_slow",
-		"steps": 25, "slow": 3, "zoom": 1.6,
-		"presses": [[0, 1, "high"]],
-		"captions": [[50, "連続ヒットで 爽快感 UP ！"]],
+		# 相手が技を振るたびに勝つ手を合わせる。ノックバックで相手が右へ下がり、
+		# 踏み込んで距離を詰め直すので、画面ごと押し込んでいく絵になる
+		"name": "rush",
+		"steps": 92, "slow": 2, "zoom": 1.5,
+		"holds": [[0, 13, 1, "right"], [36, 45, 1, "right"], [59, 68, 1, "right"]],
+		"presses": [
+			[14, 1, "low"], [14, 2, "high"],
+			[46, 1, "high"], [46, 2, "throw"],
+			[69, 1, "high"], [69, 2, "throw"],
+		],
+		"captions": [[60, "読み勝てば 一方的に押し込める"]],
 	},
 	{
-		# キャプションを出している間を止め絵にしないため、踏み込んでもう一発
-		"name": "combo_tail",
-		"steps": 30, "slow": 2, "zoom": 1.6,
-		"holds": [[0, 10, 1, "right"]],
-		"presses": [[12, 1, "high"]],
-		"captions": [],
-	},
-	{
-		"name": "speed",
-		"steps": 180, "slow": 1, "zoom": 1.15,
-		"setup": {"gap": 200.0, "p1_hp": 150, "p2_hp": 150},
-		"holds": [[0, 40, 1, "right"], [64, 72, 1, "right"], [87, 95, 1, "right"]],
-		"presses": [[41, 1, "low"], [41, 2, "high"], [73, 1, "high"], [73, 2, "throw"], [96, 1, "throw"], [96, 2, "low"]],
-		"captions": [[0, "コマンド入力なし  コンボなし"], [110, "読み勝てば 一方的に押し込める"]],
-	},
-	{
-		"name": "ko",
+		"name": "finish",
 		"steps": 30, "slow": 4, "zoom": 2.0,
-		"setup": {"gap": 80.0, "p2_hp": 20},
-		"presses": [[5, 1, "low"], [5, 2, "high"]],
+		"holds": [[0, 9, 1, "right"]],
+		"presses": [[10, 1, "throw"], [10, 2, "low"]],
 		"captions": [],
 	},
 	{
 		"name": "outro",
-		"steps": 0, "frames": 210, "slow": 1, "zoom": 2.0,
-		"captions": [[15, "K.O."], [75, "3  WIN  STREAK"], [145, "負けても3秒で次が始まる"]],
+		"steps": 0, "frames": 296, "slow": 1, "zoom": 2.0,
+		"captions": [[15, "K.O."], [85, "3  WIN  STREAK"], [160, "コマンド入力なし  コンボなし"], [235, "負けても3秒で次が始まる"]],
 	},
 ]
 
@@ -147,5 +139,8 @@ static func simulate() -> Array:
 		var events := []
 		for step in seg.steps:
 			events.append_array(m.step(input_at(seg, step, 1), input_at(seg, step, 2)))
-		result.append({"name": seg.name, "events": events})
+		result.append({
+			"name": seg.name, "events": events,
+			"p1_x": m.p1.x, "p2_x": m.p2.x, "p1_hp": m.p1.hp, "p2_hp": m.p2.hp,
+		})
 	return result
